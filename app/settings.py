@@ -12,9 +12,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-&1(zbj-f#3fb=_5+zlam(^ae^yyf)(7d5z-us2pb+19s=jj9oe'
 #SECRET_KEY = os.environ.get('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['*','www.pragas.kinghost.net','pragas.kinghost.net']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -31,6 +31,7 @@ INSTALLED_APPS = [
     'stdimage',
     'crispy_forms',
     'crispy_bootstrap4',
+    "django_extensions",
 
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
@@ -107,7 +108,16 @@ USE_I18N = True
 USE_TZ = False
 DECIMAL_SEPARATOR = ','
 USE_THOUSAND_SEPARATOR = True
-USE_L10N = False
+LANGUAGE_CODE = 'pt-br'
+
+TIME_ZONE = 'America/Sao_Paulo'
+
+USE_I18N = True
+
+USE_L10N = True
+
+USE_TZ = True
+
 DATE_INPUT_FORMATS = ('%d-%m-%Y')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
@@ -118,7 +128,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 MEDIA_URL = '/media/'
@@ -130,3 +140,26 @@ LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = 'index'
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
+
+"""
+SECURE_HSTS_SECONDS = True
+SECURE_HSTS_INCLUDE_SUBDDOMAINS = True
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+X_FRAME_OPTIONS = 'DENY'
+SECURE_SSL_REDIRECT =True"""
+
+
+
+"""
+EMAIL_HOST ='smtp.gmail.com'
+EMAIL_HOST_USER ='marcelo@gmail.com'
+EMAIL_PORT = '587'
+EMAIL_USER_TSL = True
+EMAIL_USE_SSL = False
+EMAIL_HOST_PASSWORD = ''
+DEFAULT_FROM_EMAIL = 'rpixwmpzrjcwhpwf'
+"""

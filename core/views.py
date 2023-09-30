@@ -11,7 +11,8 @@ from django.shortcuts import render
 from geopy import distance
 from .forms import LoginForm, UserRegistrationForm, \
     UserEditForm, ProfileEditForm, RegistrosModelForm
-from .models import Profile, Tb_Registros
+from .models import Profile, Tb_Registros,TbCadastro_culturas,TbCadastro_pragas
+
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -158,9 +159,12 @@ def index(request):
         return render(request, 'core/index.html')
 
 
+
+
+
 @login_required
 def cadastrarForm(request):
-
+    crialista()
     if request.method == "GET":
         form=RegistrosModelForm()
         context={
@@ -279,3 +283,11 @@ def handler403(request, exception):
     return render(request, 'core/erro_403.html',status=403)
 def handler404(request, exception):
     return render(request, 'core/erro_404.html',status=404)
+
+def crialista():
+    global lista_praga, lista_cultura
+    lista_praga = TbCadastro_pragas.objects.select_related('nome_comum').values_list('nome_comum', 'nome_comum')
+    lista_cultura = TbCadastro_culturas.objects.select_related('cultura').values_list('cultura', 'cultura')
+    return
+pass
+crialista()

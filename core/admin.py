@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Tb_Registros, TbPragas
+from .models import Profile, Tb_Registros, TbPragas,TbCadastro_culturas,TbCadastro_pragas
 
 
 @admin.register(Profile)
@@ -18,3 +18,12 @@ class Tb_OcorrenciasAdmin(admin.ModelAdmin):
 @admin.register(TbPragas)
 class TbPragasAdmin(admin.ModelAdmin):
     list_display = [ 'cultura','especie', 'nome_comum', 'nome_comum2']
+@admin.register(TbCadastro_pragas)
+class TbCadastro_pragasAdmin(admin.ModelAdmin):
+    list_display = ['id', 'especie', 'nome_comum']
+    ordering = ['nome_comum','id']
+
+@admin.register(TbCadastro_culturas)
+class TbCadastro_culturasAdmin(admin.ModelAdmin):
+    list_display = [ 'id','cultura', 'nome_comum']
+    ordering = ['cultura', 'nome_comum']

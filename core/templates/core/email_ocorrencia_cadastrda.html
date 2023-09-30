@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block title %}Visualizar Ocorrência{% endblock %}
+
+{% block content %}
+
+<html>
+  <body>
+
+<center>
+
+  <form >
+<div>
+    {% for reg in registro %}
+        <h1>ATENÇÃO!</h1>
+        <h3>Nova ocorrência Cadastrada</h3>
+        <h2>Nome da Propriedade: {{reg.nome_propriedade}}</h2>
+        <h3>Data do Registro: {{reg.inserido|date:'d-m-Y H:i'}}</h3>
+        <h3>Cultura Afetada: {{reg.cultura}}</h3>
+        <h3>Praga: {{reg.praga}}</h3>
+        <h3>Prejuizo R$: {{reg.prejuizo}}</h3>
+        <img src=/media/{{reg.imagem}} class="img-responsive" />
+        <p>{{reg.observacao}} </p>
+    {% endfor %}
+</div>
+
+  </form>
+    </center>
+</body>
+{% endblock %}

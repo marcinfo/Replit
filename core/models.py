@@ -2,6 +2,13 @@ from django.conf import settings
 from django.db import models
 from stdimage import StdImageField
 
+def crialista():
+    global lista_praga, lista_cultura
+    lista_praga = TbCadastro_pragas.objects.select_related('nome_comum').values_list('nome_comum', 'nome_comum')
+    lista_cultura = TbCadastro_culturas.objects.select_related('cultura').values_list('cultura', 'cultura')
+    return
+pass
+
 CONTROLE_CHOICE=(
     ("Controlada",'Controlada'),
     ("Fora de Controle","Fora de Controle"),
@@ -31,11 +38,32 @@ class TbPragas(models.Model):
     class Meta:
         verbose_name = "Tabela de Praga"
         verbose_name_plural = "Tabela de Pragas"
-lista_praga = TbPragas.objects.select_related('nome_comum').values_list('nome_comum', 'nome_comum').order_by(
-    "nome_comum").distinct()
-lista_cultura = TbPragas.objects.select_related('cultura').values_list('cultura', 'cultura').order_by(
-    "cultura").distinct()
+
+
+
+class TbCadastro_pragas(models.Model):
+    id= models.AutoField(primary_key=True)
+    especie = models.CharField(max_length=45, unique=True)
+    nome_comum = models.CharField(max_length=45, unique=True)
+    class Meta:
+        verbose_name = "Tabela Cadastro de Praga"
+        verbose_name_plural = "Tabela de cadastro de Pragas"
+
+class TbCadastro_culturas(models.Model):
+    id= models.AutoField(primary_key=True)
+    cultura = models.CharField(max_length=45, unique=True)
+    nome_comum = models.CharField(max_length=45, unique=True)
+    class Meta:
+        verbose_name = "Tabela Cadastro de Cultura"
+        verbose_name_plural = "Tabela de cadastro de Culturas"
+
+#lista_praga = TbCadastro_pragas.objects.select_related('nome_comum').values_list('nome_comum', 'nome_comum')
+#lista_cultura = TbCadastro_culturas.objects.select_related('cultura').values_list('cultura', 'cultura')
+
+
+
 class Tb_Registros(Base):
+    crialista()
     id_ocorrencia = models.AutoField(primary_key=True)
     usuario =  models.CharField(max_length=45,editable=False)
     praga = models.CharField(max_length=40,choices=lista_praga,help_text='Selecione qual o tipo de praga esta contaminando.')
@@ -58,6 +86,7 @@ class Tb_Registros(Base):
         return self.usuario
 
 class Ocorrencias(Base):
+    crialista()
     id_ocorrencia = models.AutoField(primary_key=True)
     id_user = models.CharField(verbose_name='user_id',max_length=45)
     user = models.CharField(verbose_name='Usuário',max_length=45)

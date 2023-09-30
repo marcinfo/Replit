@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Profile,Tb_Registros,TbPragas
+from .models import Profile,Tb_Registros,crialista
 
 
 
@@ -39,6 +39,8 @@ class ProfileEditForm(forms.ModelForm):
         fields = ('date_of_birth', 'photo')
 
 class RegistrosModelForm(forms.ModelForm):
+    crialista()
+
     class Meta:
         model = Tb_Registros
         fields = ( 'cultura', 'praga','status', 'nome_propriedade','latitude', 'longitude',
