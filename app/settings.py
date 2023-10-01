@@ -154,7 +154,7 @@ SECURE_SSL_REDIRECT =True"""
 
 
 
-"""
+'''
 EMAIL_HOST ='smtp.gmail.com'
 EMAIL_HOST_USER ='marcelo@gmail.com'
 EMAIL_PORT = '587'
@@ -162,4 +162,5 @@ EMAIL_USER_TSL = True
 EMAIL_USE_SSL = False
 EMAIL_HOST_PASSWORD = ''
 DEFAULT_FROM_EMAIL = 'rpixwmpzrjcwhpwf'
-"""
+'''
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

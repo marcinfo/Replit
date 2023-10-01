@@ -3,6 +3,7 @@ import pandas as pd
 import plotly.express as px
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
+from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator
 from django.db.models import Count
@@ -12,7 +13,10 @@ from geopy import distance
 from .forms import LoginForm, UserRegistrationForm, \
     UserEditForm, ProfileEditForm, RegistrosModelForm
 from .models import Profile, Tb_Registros,TbCadastro_culturas,TbCadastro_pragas
-
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.conf import settings
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -80,6 +84,11 @@ def edit(request):
                   {'user_form': user_form,
                    'profile_form': profile_form})
 def index(request):
+    email_usuario = User.objects.values('email').filter(is_active=True)
+
+
+    #dados_email = dados_user.union(dado_perfil).order_by("email")
+    print(email_usuario)
     registros = Tb_Registros.objects.select_related('usuario').all().filter(ativo=True).values()
     contador =registros.count()
     if contador != 0:
@@ -291,3 +300,13 @@ def crialista():
     return
 pass
 crialista()
+
+
+def enviar_email(request):
+    html_content = render_to_string('core/email_ocorrencia.html',{'nome':'Monitor de Pragas'})
+    text_content = strip_tags(html_content)
+    email = EmailMultiAlternatives('Aviso de ocorrências de pragas', text_content,settings.EMAIL_HOST_USER,
+                                   ['teste@gmail.com','test2@gmail.com'])
+    email.attach_alternative(html_content,'text/html')
+    email.send()
+    return HttpResponse('olá')

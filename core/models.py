@@ -13,6 +13,7 @@ CONTROLE_CHOICE=(
     ("Controlada",'Controlada'),
     ("Fora de Controle","Fora de Controle"),
 )
+
 class Base(models.Model):
     inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True)
     atualizado = models.DateTimeField(verbose_name="Atualizado em:", auto_now=True, null=True)
@@ -20,7 +21,10 @@ class Base(models.Model):
     class Meta:
         abstract = True
 class Profile(models.Model):
-    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE,related_name='user_id')
+
+    notificacoes = models.BooleanField('Receber Notificações?', default=True)
     date_of_birth = models.DateField(blank=True, null=True)
     photo = models.ImageField(upload_to='users/%Y/%m/%d/', blank=True)
     class Meta:
