@@ -1,6 +1,10 @@
 import folium
 import pandas as pd
 import plotly.express as px
+import smtplib
+from decouple import config
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from django.contrib import messages
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
@@ -13,10 +17,7 @@ from geopy import distance
 from .forms import LoginForm, UserRegistrationForm, \
     UserEditForm, ProfileEditForm, RegistrosModelForm
 from .models import Profile, Tb_Registros,TbCadastro_culturas,TbCadastro_pragas
-from django.core.mail import EmailMultiAlternatives
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
-from django.conf import settings
+
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -303,10 +304,29 @@ crialista()
 
 
 def enviar_email(request):
-    html_content = render_to_string('core/email_ocorrencia.html',{'nome':'Monitor de Pragas'})
-    text_content = strip_tags(html_content)
-    email = EmailMultiAlternatives('Aviso de ocorrências de pragas', text_content,settings.EMAIL_HOST_USER,
-                                   ['teste@gmail.com','test2@gmail.com'])
-    email.attach_alternative(html_content,'text/html')
-    email.send()
+
+
+    host = "smtp.gmail.com"
+    port = "587"
+    login = "monitorapragas@gmail.com"
+    senha = "xmzr vigv teba yhup"
+    server = smtplib.SMTP(host, port)
+
+    server.ehlo()
+    server.starttls()
+
+    server.login(login, senha)
+
+    corpo = "<b>Uma nova ocorrência de PRAGA foi cadastrada, para mais intormações acesse \
+      o sistema de MONITORAMENTO DE PRAGAS online.</b>"
+
+    email_msg =MIMEMultipart()
+    email_msg['From'] = login
+    email_msg['To'] = 'marcelosantos170@gmail.com'
+    email_msg['Cco'] = 'marcelosantos170@gmail.com'
+    email_msg['Subject'] = "SISTEMA DE MONITORAMENTO DE PRAGAS ON-LINE - ATENÇÂO!"
+    email_msg.attach(MIMEText(corpo, 'html'))
+    server.sendmail(email_msg['From'], email_msg['Cco'], email_msg.as_string())
+    server.quit()
+
     return HttpResponse('olá')

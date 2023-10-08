@@ -1,4 +1,4 @@
-
+from decouple import config
 from pathlib import Path
 import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -138,7 +138,7 @@ LOGIN_REDIRECT_URL = 'index'
 LOGIN_URL = 'login'
 LOGOUT_URL = 'logout'
 LOGOUT_REDIRECT_URL = 'index'
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 """
@@ -153,14 +153,11 @@ X_FRAME_OPTIONS = 'DENY'
 SECURE_SSL_REDIRECT =True"""
 
 
-
-'''
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST ='smtp.gmail.com'
-EMAIL_HOST_USER ='marcelo@gmail.com'
+EMAIL_HOST_USER ='monitorapragas@gmail.com'
 EMAIL_PORT = '587'
 EMAIL_USER_TSL = True
 EMAIL_USE_SSL = False
-EMAIL_HOST_PASSWORD = ''
-DEFAULT_FROM_EMAIL = 'rpixwmpzrjcwhpwf'
-'''
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST_PASSWORD = 'xmzr vigv teba yhup'
+DEFAULT_FROM_EMAIL = 'monitorapragas@gmail.com'
