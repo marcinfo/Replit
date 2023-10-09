@@ -2,7 +2,9 @@ import folium
 import pandas as pd
 import plotly.express as px
 import smtplib
-import threading
+
+import schedule
+import time as tm
 from decouple import config
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -19,10 +21,8 @@ from .forms import LoginForm, UserRegistrationForm, \
     UserEditForm, ProfileEditForm, RegistrosModelForm
 from .models import Profile, Tb_Registros,TbCadastro_culturas,TbCadastro_pragas,TbParametros
 
-import schedule
-import time as tm
-from datetime import time
 from schedule import repeat, every
+
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -90,9 +90,7 @@ def edit(request):
                   {'user_form': user_form,
                    'profile_form': profile_form})
 def index(request):
-    enviar_email_auto = TbParametros.objects.values('ativa_email').last()
-    print(enviar_email_auto)
-    #enviar_email()
+
     registros = Tb_Registros.objects.select_related('usuario').all().filter(ativo=True).values()
     contador =registros.count()
     if contador != 0:
@@ -190,7 +188,8 @@ def cadastrarForm(request):
             regitro = form.save(commit=False)
             regitro.usuario = request.user
             registro = form.save()
-
+            messages.info(request, 'Ocorrência Cadastrada com Sucesso!')
+            enviar_email()
             form = RegistrosModelForm()
 
         context = {
@@ -307,7 +306,9 @@ def crialista():
 pass
 crialista()
 
-@repeat(every().minute)
+
+
+
 def enviar_email():
     email_usuario = User.objects.values('email').filter(is_active=True)
 
@@ -332,28 +333,18 @@ def enviar_email():
         email_msg['From'] = login
         email_msg['To'] = 'marcelosantos170@gmail.com'
         email_msg['Cco'] = enviado
-        print(email_msg['Cco'])
-        email_msg['Subject'] = "SISTEMA DE MONITORAMENTO DE PRAGAS ON-LINE - ATENÇÂO!"
+
+        email_msg['Subject'] = "MONITOR DE PRAGAS on-line - TCC530 - Turma 002 - Univesp"
         email_msg.attach(MIMEText(corpo, 'html'))
         server.sendmail(email_msg['From'], email_msg['Cco'], email_msg.as_string())
+        email = email_msg['Cco']
         conta_email = conta_email + 1
-        print(conta_email)
+        print(f'{conta_email}-{email}')
     server.quit()
-    print(conta_email)
-def iniciar():
 
-    while True:
-        schedule.every().minute.do(enviar_email)
-        schedule.run_pending()
-        tm.sleep(1)
-
-
-enviar_email_auto = TbParametros.objects.values('ativa_email').last()
-print(enviar_email_auto)
 
 #if enviar_email_auto == True:
 
 
 
-t=threading.Thread(target = enviar_email())
-t.run()
+

@@ -4,7 +4,6 @@ from .models import Profile,Tb_Registros,crialista
 
 
 
-
 class LoginForm(forms.Form):
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput)

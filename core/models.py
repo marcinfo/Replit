@@ -80,7 +80,7 @@ class Tb_Registros(Base):
     hectares=models.IntegerField(verbose_name='Quantidade de hectar afetado',default=0,help_text='quantos hectares estão contaminados')
     latitude = models.CharField(max_length=45)
     longitude = models.CharField(max_length=45)
-    imagem = StdImageField('Imagem',upload_to='images',help_text='Selecione as imagens da praga.',null=True,blank=False,
+    imagem = StdImageField('Imagem',upload_to='images',null=True,blank=False,
                            variations={'thumbnail': {"width": 300, "height": 400, "crop": True}})
     observacao = models.CharField(max_length=200,verbose_name='Observações',null=True,blank=True)
     class Meta:
@@ -119,3 +119,5 @@ class TbParametros(models.Model):
     class Meta:
         verbose_name = "Tabela Cadastro de Parametro"
         verbose_name_plural = "Tabela de cadastro de Parametros"
+
+
