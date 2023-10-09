@@ -13,7 +13,7 @@ CONTROLE_CHOICE=(
     ("Controlada",'Controlada'),
     ("Fora de Controle","Fora de Controle"),
 )
-
+hora_envio_email=(('0','00'),('1','01'))
 class Base(models.Model):
     inserido = models.DateTimeField(verbose_name="Inserido em:", auto_now_add=True, null=True)
     atualizado = models.DateTimeField(verbose_name="Atualizado em:", auto_now=True, null=True)
@@ -110,3 +110,12 @@ class Ocorrencias(Base):
         verbose_name_plural = "Tabela de Ocorrência"
     def __str__(self):
         return self.user
+
+class TbParametros(models.Model):
+    id= models.AutoField(primary_key=True)
+    ativa_email = models.BooleanField('Enviar email?', default=False)
+    hora_envio = models.CharField(max_length=2,choices=hora_envio_email,verbose_name='Horario para envio do e-mail',null=True,blank=True )
+
+    class Meta:
+        verbose_name = "Tabela Cadastro de Parametro"
+        verbose_name_plural = "Tabela de cadastro de Parametros"

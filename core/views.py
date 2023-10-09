@@ -2,6 +2,7 @@ import folium
 import pandas as pd
 import plotly.express as px
 import smtplib
+import threading
 from decouple import config
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -16,8 +17,12 @@ from django.shortcuts import render
 from geopy import distance
 from .forms import LoginForm, UserRegistrationForm, \
     UserEditForm, ProfileEditForm, RegistrosModelForm
-from .models import Profile, Tb_Registros,TbCadastro_culturas,TbCadastro_pragas
+from .models import Profile, Tb_Registros,TbCadastro_culturas,TbCadastro_pragas,TbParametros
 
+import schedule
+import time as tm
+from datetime import time
+from schedule import repeat, every
 def user_login(request):
     if request.method == 'POST':
         form = LoginForm(request.POST)
@@ -85,11 +90,9 @@ def edit(request):
                   {'user_form': user_form,
                    'profile_form': profile_form})
 def index(request):
-    email_usuario = User.objects.values('email').filter(is_active=True)
-
-
-    #dados_email = dados_user.union(dado_perfil).order_by("email")
-    print(email_usuario)
+    enviar_email_auto = TbParametros.objects.values('ativa_email').last()
+    print(enviar_email_auto)
+    #enviar_email()
     registros = Tb_Registros.objects.select_related('usuario').all().filter(ativo=True).values()
     contador =registros.count()
     if contador != 0:
@@ -174,7 +177,7 @@ def index(request):
 
 @login_required
 def cadastrarForm(request):
-    crialista()
+
     if request.method == "GET":
         form=RegistrosModelForm()
         context={
@@ -187,11 +190,13 @@ def cadastrarForm(request):
             regitro = form.save(commit=False)
             regitro.usuario = request.user
             registro = form.save()
+
             form = RegistrosModelForm()
 
         context = {
             'form':form
         }
+        #enviar_email()
         return render(request, 'core/cadastrar.html', context=context)
 
 @login_required
@@ -302,31 +307,53 @@ def crialista():
 pass
 crialista()
 
+@repeat(every().minute)
+def enviar_email():
+    email_usuario = User.objects.values('email').filter(is_active=True)
 
-def enviar_email(request):
-
-
-    host = "smtp.gmail.com"
-    port = "587"
-    login = "monitorapragas@gmail.com"
-    senha = "xmzr vigv teba yhup"
+    host = config('EMAIL_HOST')
+    port = config('EMAIL_PORT')
+    login = config('EMAIL_HOST_USER')
+    senha = config('EMAIL_HOST_PASSWORD')
     server = smtplib.SMTP(host, port)
 
     server.ehlo()
     server.starttls()
 
     server.login(login, senha)
+    conta_email = 0
+    for email_cad in email_usuario:
 
-    corpo = "<b>Uma nova ocorrência de PRAGA foi cadastrada, para mais intormações acesse \
-      o sistema de MONITORAMENTO DE PRAGAS online.</b>"
+        enviado = email_cad['email']
+        corpo = "<b>Uma nova ocorrência de PRAGA foi cadastrada, para mais informações acesse \
+          o sistema de MONITORAMENTO DE PRAGAS online.</b>"
 
-    email_msg =MIMEMultipart()
-    email_msg['From'] = login
-    email_msg['To'] = 'marcelosantos170@gmail.com'
-    email_msg['Cco'] = 'marcelosantos170@gmail.com'
-    email_msg['Subject'] = "SISTEMA DE MONITORAMENTO DE PRAGAS ON-LINE - ATENÇÂO!"
-    email_msg.attach(MIMEText(corpo, 'html'))
-    server.sendmail(email_msg['From'], email_msg['Cco'], email_msg.as_string())
+        email_msg =MIMEMultipart()
+        email_msg['From'] = login
+        email_msg['To'] = 'marcelosantos170@gmail.com'
+        email_msg['Cco'] = enviado
+        print(email_msg['Cco'])
+        email_msg['Subject'] = "SISTEMA DE MONITORAMENTO DE PRAGAS ON-LINE - ATENÇÂO!"
+        email_msg.attach(MIMEText(corpo, 'html'))
+        server.sendmail(email_msg['From'], email_msg['Cco'], email_msg.as_string())
+        conta_email = conta_email + 1
+        print(conta_email)
     server.quit()
+    print(conta_email)
+def iniciar():
 
-    return HttpResponse('olá')
+    while True:
+        schedule.every().minute.do(enviar_email)
+        schedule.run_pending()
+        tm.sleep(1)
+
+
+enviar_email_auto = TbParametros.objects.values('ativa_email').last()
+print(enviar_email_auto)
+
+#if enviar_email_auto == True:
+
+
+
+t=threading.Thread(target = enviar_email())
+t.run()
